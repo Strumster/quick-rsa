@@ -8,10 +8,20 @@ sys.setrecursionlimit(1500)
 def gcdEx(a, b):
     if a == 0:
         return b, 0, 1
-    gcd, x1, y1 = gcdEx(b % a, a)
-    x = y1 - (b // a) * x1
-    y = x1
-    return gcd, x, y
+    prev_r = a
+    r = b
+    x0, x1, y0, y1 = 1, 0, 0, 1
+    while r > 0:
+        new_r = prev_r % r
+        x = x0 - (prev_r // r) * x1
+        y = y0 - (prev_r // r) * y1
+        x0 = x1
+        x1 = x
+        y0 = y1
+        y1 = y
+        prev_r = r
+        r = new_r
+    return prev_r, x0, y0
 
 
 def lcm(a, b):
@@ -19,10 +29,10 @@ def lcm(a, b):
     return multiplier
 
 
-def RSAkeygen():
+def RSAkeygen(bits):
     while True:
-        p = largeprimegen(1024)
-        q = largeprimegen(1024)
+        p = largeprimegen(bits)
+        q = largeprimegen(bits)
         if p == q:
             continue
         else:
@@ -39,17 +49,17 @@ def RSAkeygen():
     return e, n, d
 
 
-def RSAencrypt(m, e_, n_):
-    c = pow(m, e_, n_)
+def RSAencrypt(m, e, n):
+    c = pow(m, e, n)
     return c
 
 
-def RSAdecrypt(c, d_, n_):
-    m = pow(c, d_, n_)
+def RSAdecrypt(c, d, n):
+    m = pow(c, d, n)
     return m
 
 
-key = RSAkeygen()
+key = RSAkeygen(1024)
 encrypted = RSAencrypt(1550, key[0], key[1])
 decrypted = RSAdecrypt(encrypted, key[2], key[1])
 
